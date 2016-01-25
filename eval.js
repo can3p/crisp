@@ -3,29 +3,42 @@
 let Tokenizer = require('./tokenizer');
 let Parser = require('./parser');
 
-let symbols = {
+var symbols = {
+    'def': (token, value) => symbols[token.value] = value,
+    'println': (s) => console.log(s),
     '+': (a, b) => a + b,
     '-': (a, b) => a - b,
     '*': (a, b) => a * b
 }
 
 function eval_list(list) {
-    var evaled = list.map((item) => eval_tree(item));
+    return list.map((item) => eval_tree(item));
+}
 
-    if ((typeof evaled[0]) !== 'function') {
+function eval_form(list) {
+    var first = eval_tree(list[0]);
+    var rest;
+
+    if (first === symbols.def) {
+        rest = [list[1]].concat(eval_list(list.slice(2)));
+    } else {
+        rest = eval_list(list.slice(1));
+    }
+
+    if ((typeof first) !== 'function') {
         throw new Error("Function is expected to be the head of the form, something else found: " + evaled[0]);
     }
 
-    if (evaled[0].length !== evaled.length - 1) {
+    if (first.length !== rest.length) {
         throw new Error("Incorrect arity, function expects " + evaled[0].length + " arguments");
     }
 
-    return evaled[0].apply(null, evaled.slice(1));
+    return first.apply(null, rest);
 }
 
 function eval_tree(tree) {
     if (Array.isArray(tree)) {
-        return eval_list(tree);
+        return eval_form(tree);
     } else if (tree.type === Tokenizer.NUMBER) {
         return tree.value;
     } else if (tree.type === Tokenizer.SYMBOL) {

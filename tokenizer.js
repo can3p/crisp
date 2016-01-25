@@ -98,7 +98,7 @@ Tokenizer.prototype._readNumber = function() {
 
 Tokenizer.prototype._readSymbol = function() {
     var symbol_str = '';
-    while (!this.ch().match(/\s/)) {
+    while (!this.ch().match(/[\s)]/)) {
         symbol_str += this.ch();
         this.inc();
     }
