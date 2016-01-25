@@ -13,7 +13,7 @@ Parser.prototype.parse = function() {
         case Tokenizer.NUMBER:
         case Tokenizer.SYMBOL: return token;
         case Tokenizer.LBRACE: return this._parseList();
-        case Tokenizer.END: throw new Error("unexpected end of input");
+        case Tokenizer.END: return ""; // silence the end
         default: throw new Error("Unexpected token: " + JSON.stringify(token));
     }
 };
@@ -37,8 +37,7 @@ Parser.prototype._parseList = function() {
 Parser.parse = function(s) {
     if (!s) throw new Error("Parser expects a non-empty string");
 
-    let p = new Parser(s);
-    return p.parse();
+    return new Parser(s);
 }
 
 module.exports = Parser;

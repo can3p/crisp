@@ -16,6 +16,10 @@ function eval_list(list) {
         throw new Error("Function is expected to be the head of the form, something else found: " + evaled[0]);
     }
 
+    if (evaled[0].length !== evaled.length - 1) {
+        throw new Error("Incorrect arity, function expects " + evaled[0].length + " arguments");
+    }
+
     return evaled[0].apply(null, evaled.slice(1));
 }
 
@@ -36,7 +40,13 @@ function eval_tree(tree) {
 }
 
 module.exports = function(str) {
-    var tree = Parser.parse(str);
+    var tree;
+    var parser = Parser.parse(str);
+    var result;
 
-    return eval_tree(tree);
+    while (tree = parser.parse(str)) {
+        result = eval_tree(tree);
+    }
+
+    return result
 }

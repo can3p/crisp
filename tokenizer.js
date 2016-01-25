@@ -38,7 +38,7 @@ Tokenizer.prototype.inc = function() {
 }
 
 Tokenizer.prototype.end_q = function() {
-    return this.source.legth === this.pos + 1;
+    return this.source.length === this.pos;
 }
 
 Tokenizer.prototype._getNext = function() {
